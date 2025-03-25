@@ -172,3 +172,20 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# System Files
+.DS_Store
+
+# Documentation Files
+docs/
+
+# Exclude virtual environment
+.venv/
+
+# DotEnv configuration
+.env
+.env.local
+
+# VS Code
+.vscode/
+*.code-workspace
