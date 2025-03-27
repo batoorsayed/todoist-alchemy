@@ -46,6 +46,9 @@ def get_task_data(task) -> Dict:
     }
 
 
+# TODO: Add more tools later for processing and updating tasks
+
+
 @mcp.tool()
 def fetch_unprocessed_tasks() -> List[Dict]:
     """Fetch all unprocessed tasks from Todoist that need organization."""
