@@ -25,6 +25,42 @@ class TodoistClient:
             print(f"Error fetching tasks: {error}")
             return []
 
+    def get_projects(self):
+        """Get all projects from Todoist."""
+        try:
+            return self.api.get_projects()
+        except Exception as error:
+            print(f"Error fetching projects: {error}")
+            return []
+
+    def is_shared_project(self, project_id):
+        """Check if a project is shared."""
+        try:
+            project = self.api.get_project(project_id)
+            return project.is_shared
+        except Exception as error:
+            print(f"Error checking project: {error}")
+            return False
+
+    def update_task(self, task_id, **kwargs):
+        """Update a task in Todoist."""
+        try:
+            return self.api.update_task(task_id, **kwargs)
+        except Exception as error:
+            print(f"Error updating task: {error}")
+            return None
+
+    def create_subtask(self, parent_id, content, **kwargs):
+        """Create a subtask for a task in Todoist."""
+        try:
+            kwargs["parent_id"] = parent_id
+            kwargs["content"] = content
+
+            return self.api.add_task(**kwargs)
+        except Exception as error:
+            print(f"Error creating subtask for {parent_id}: {error}")
+            return None
+
     # Add more methods here as needed
 
 
