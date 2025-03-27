@@ -179,11 +179,7 @@ cython_debug/
 # Documentation Files
 docs/
 
-# Exclude virtual environment
-.venv/
-
 # DotEnv configuration
-.env
 .env.local
 
 # VS Code
