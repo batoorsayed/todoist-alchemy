@@ -64,8 +64,12 @@ class TodoistClient:
     # Add more methods here as needed
 
 
+# Test in todoist_client.py
 if __name__ == "__main__":
-    # Verify the client works
     client = TodoistClient()
     tasks = client.get_active_tasks()
     print(f"Found {len(tasks)} active tasks")
+
+    # Print the first task as an example
+    if tasks:
+        print(f"Example task: {tasks[0].content}")
