@@ -65,6 +65,18 @@ def _get_task_data(task) -> Dict:
         "is_completed": task.is_completed,
         # Add other relevant task data here
     }
+
+    # Fetch existing subtasks if this is a parent task
+    if task.parent_id is None:  # Only fetch subtasks for top-level tasks
+        try:
+            subtasks = todoist_client.get_subtasks(task.id)
+            if subtasks:
+                task_data["subtasks"] = [
+                    _get_task_data(subtask) for subtask in subtasks
+                ]
+        except Exception as e:
+            print(f"Error fetching subtasks for task {task.id}: {e}")
+
     return task_data
 
 
@@ -100,75 +112,87 @@ def _get_task_updates(task_dict: dict, processing_notes: dict) -> dict:
     """
     # Extract the original task information
     task_id = task_dict["id"]
-    content = task_dict["content"]
-    description = task_dict["description"] or ""
-    project_id = task_dict["project_id"]
-    project_name = task_dict.get("project_name", "")
 
-    # Apply Claude's transformations from processing_notes
-    new_content = processing_notes.get("new_content", content)
-    new_description = processing_notes.get("new_description", description)
-
-    # Ensure the task is marked as processed without duplicate markers
-    if "[TA]" not in new_description:
-        new_description = f"{new_description} [TA]".strip()
-
-    # Create updated task dictionary
-    return {
+    # Create updated task dictionary with all possible fields from processing_notes
+    updates = {
         "id": task_id,
-        "content": new_content,
-        "description": new_description,
-        "priority": processing_notes.get("priority"),
-        "labels": processing_notes.get("labels", []),
-        "due_string": processing_notes.get("due_string"),
-        # Project information
-        "project_id": project_id,
-        "project_name": project_name,
-        # Include original subtasks if they exist
-        "original_subtasks": task_dict.get("subtasks", []),
-        # Include any new subtasks from processing notes
-        "new_subtasks": processing_notes.get("subtasks", []),
-        # Include any project changes from processing notes
-        "new_project_id": processing_notes.get("project_id"),
-        "new_project_name": processing_notes.get("project_name"),
+        # Use processing_notes values with fallback to original values
+        "content": processing_notes.get("content", task_dict["content"]),
+        "description": processing_notes.get(
+            "description", task_dict["description"] or ""
+        ),
+        "priority": processing_notes.get("priority", task_dict["priority"]),
+        "labels": processing_notes.get("labels", task_dict["labels"]),
     }
 
+    # Ensure the task is marked as processed without duplicate markers
+    if "[TA]" not in updates["description"]:
+        updates["description"] = f"{updates['description']} [TA]".strip()
 
-def _create_subtasks(task_id, subtasks):
-    """Create subtasks with all provided metadata preserved."""
+    # Add optional fields only if they exist in processing_notes
+    optional_fields = ["due_string", "project_id", "section_id"]
+    for field in optional_fields:
+        if field in processing_notes:
+            updates[field] = processing_notes[field]
+
+    # Include subtasks if present
+    if "subtasks" in processing_notes:
+        updates["subtasks"] = processing_notes["subtasks"]
+
+    return updates
+
+
+def _process_subtasks(
+    task_id: int, subtasks_data: List[Dict], todoist_client: TodoistClient
+) -> List[Dict]:
+    """
+    Process subtasks by deleting existing ones and creating new ones.
+
+    Args:
+        task_id: Parent task ID
+        subtasks_data: List of subtask data dictionaries
+        todoist_client: Todoist client instance
+
+    Returns:
+        List of created subtasks with their IDs and content
+    """
     created_subtasks = []
+    try:
+        # Delete existing subtasks
+        if not todoist_client.delete_subtasks(task_id):
+            print(f"Failed to delete subtasks for task {task_id}")
 
-    for subtask in subtasks:
-        # Extract content (required)
-        content = subtask.get("content")
-        if not content:
-            print("Skipping subtask creation: missing content")
-            continue
+        # Create new subtasks
+        for subtask_data in subtasks_data:
+            # Add parent_id
+            subtask_data["parent_id"] = task_id
 
-        # Create a copy of subtask data without modifying the original
-        subtask_data = subtask.copy()
-
-        # Set parent task ID
-        subtask_data["parent_id"] = task_id
-
-        # Create the subtask
-        try:
-            new_subtask = todoist_client.api.add_task(**subtask_data)
-            if new_subtask:
-                created_subtasks.append(
-                    {
-                        "id": new_subtask.id,
-                        "content": new_subtask.content,
-                        # Include any other fields you want to track
-                    }
+            # Add TA marker to description
+            if (
+                "description" in subtask_data
+                and "[TA]" not in subtask_data["description"]
+            ):
+                subtask_data["description"] = (
+                    f"{subtask_data['description']} [TA]".strip()
                 )
-        except Exception as e:
-            print(f"Error creating subtask '{content}': {e}")
+
+            # Create subtask
+            try:
+                new_subtask = todoist_client.api.add_task(**subtask_data)
+                if new_subtask:
+                    created_subtasks.append(
+                        {"id": new_subtask.id, "content": new_subtask.content}
+                    )
+            except Exception as e:
+                print(f"Error creating subtask: {e}")
+
+    except Exception as e:
+        print(f"Error processing subtasks for task {task_id}: {e}")
 
     return created_subtasks
 
 
-def _update_task(task_dict: dict, processing_notes: dict) -> dict:
+def _update_task(task_dict: dict, processing_notes: dict) -> Dict:
     """
     Update a task in Todoist based on processing notes.
 
@@ -177,15 +201,21 @@ def _update_task(task_dict: dict, processing_notes: dict) -> dict:
         processing_notes: Dictionary containing Claude's processing decisions
 
     Returns:
-        Updated task dictionary with alchemy transformations applied
+        dict: Result of the update operation with:
+            - success: bool indicating operation success
+            - task: Updated task information
+            - subtasks_created: List of created subtasks
+            - error: Error message if operation failed
     """
     try:
-        # Get task ID
         task_id = task_dict["id"]
-        # Get updates
         updates = _get_task_updates(task_dict, processing_notes)
-        # Update task in Todoist
-        updated_task = todoist_client.update_task(task_id, **updates)
+
+        # Prepare API updates
+        api_updates = {k: v for k, v in updates.items() if k not in ["id", "subtasks"]}
+
+        # Update task
+        updated_task = todoist_client.update_task(task_id, **api_updates)
 
         # Check if update was successful
         if not updated_task:
@@ -193,14 +223,16 @@ def _update_task(task_dict: dict, processing_notes: dict) -> dict:
 
         result = {"success": True, "task": updated_task}
 
-        # Create subtasks if needed
-        if processing_notes.get("subtasks"):
-            subtasks = _create_subtasks(task_id, processing_notes.get("subtasks"))
-            # Add subtasks to the updated task dictionary
-            result["subtasks"] = subtasks
+        # Process subtasks if present
+        if "subtasks" in processing_notes:
+            result["subtasks_created"] = _process_subtasks(
+                task_id, processing_notes["subtasks"], todoist_client
+            )
 
         return result
+
     except Exception as e:
+        print(f"Error updating task {task_dict.get('id')}: {e}")
         return {"success": False, "error": str(e)}
 
 

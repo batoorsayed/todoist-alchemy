@@ -94,9 +94,9 @@ class TodoistClient:
                 "due_date",
                 "due_datetime",
                 "due_lang",
-                "project_id",  # Not listed in Docs
-                "section_id",  # Not listed in Docs
-                "order",  # Not listed in Docs
+                "project_id",
+                "section_id",
+                "order",
                 "assignee_id",
                 # "duration",
                 # "duration_unit",
@@ -109,6 +109,29 @@ class TodoistClient:
         except Exception as error:
             print(f"Error updating task {task_id}: {error}")
             return None
+
+    def get_subtasks(self, parent_id):
+        """Get all subtasks for a given parent task."""
+        try:
+            return self.api.get_tasks(parent_id=parent_id)
+        except Exception as error:
+            print(f"Error fetching subtasks for parent {parent_id}: {error}")
+            return []
+
+    def delete_subtasks(self, parent_id):
+        """Delete all subtasks for a given parent task."""
+        try:
+            # Get all subtasks
+            subtasks = self.get_subtasks(parent_id)
+
+            # Delete each subtask
+            for subtask in subtasks:
+                self.api.delete_task(task_id=subtask.id)
+
+            return True
+        except Exception as error:
+            print(f"Error deleting subtasks for parent {parent_id}: {error}")
+            return False
 
     # Add more methods here as needed
 
