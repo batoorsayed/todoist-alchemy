@@ -162,20 +162,29 @@ def _update_task(task_dict: dict, processing_notes: dict) -> dict:
     Returns:
         Updated task dictionary with alchemy transformations applied
     """
-    # Get task ID
-    task_id = task_dict["id"]
-    # Get updates
-    updates = _get_task_updates(task_dict, processing_notes)
-    # Update task in Todoist
-    updated_task = todoist_client.update_task(task_id, **updates)
+    try:
+        # Get task ID
+        task_id = task_dict["id"]
+        # Get updates
+        updates = _get_task_updates(task_dict, processing_notes)
+        # Update task in Todoist
+        updated_task = todoist_client.update_task(task_id, **updates)
 
-    # Create subtasks if needed
-    if processing_notes.get("subtasks"):
-        subtasks = _create_subtasks(task_dict, processing_notes)
-        # Add subtasks to the updated task dictionary
-        updated_task["subtasks"] = subtasks
+        # Check if update was successful
+        if not updated_task:
+            return {"success": False, "error": "Failed to update task"}
 
-    return updated_task
+        result = {"success": True, "task": updated_task}
+
+        # Create subtasks if needed
+        if processing_notes.get("subtasks"):
+            subtasks = _create_subtasks(task_id, processing_notes.get("subtasks"))
+            # Add subtasks to the updated task dictionary
+            result["subtasks"] = subtasks
+
+        return result
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 
 ### Todoist Integration Functions (Tools) ###
