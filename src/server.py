@@ -117,16 +117,38 @@ def _get_task_updates(task_dict: dict, processing_notes: dict) -> dict:
     }
 
 
-def _create_subtasks(task_dict: dict, processing_notes: dict) -> List[Dict]:
-    """
-    Create subtasks for a task based on processing notes.
-    """
-    # Extract the original task information
-    task_id = task_dict["id"]
-    subtasks = processing_notes.get("subtasks", [])
+def _create_subtasks(task_id, subtasks):
+    """Create subtasks with all provided metadata preserved."""
+    created_subtasks = []
 
-    # Create subtasks and convert them to dictionaries
-    return [todoist_client.create_subtask(task_id, subtask) for subtask in subtasks]
+    for subtask in subtasks:
+        # Extract content (required)
+        content = subtask.get("content")
+        if not content:
+            print("Skipping subtask creation: missing content")
+            continue
+
+        # Create a copy of subtask data without modifying the original
+        subtask_data = subtask.copy()
+
+        # Set parent task ID
+        subtask_data["parent_id"] = task_id
+
+        # Create the subtask
+        try:
+            new_subtask = todoist_client.api.add_task(**subtask_data)
+            if new_subtask:
+                created_subtasks.append(
+                    {
+                        "id": new_subtask.id,
+                        "content": new_subtask.content,
+                        # Include any other fields you want to track
+                    }
+                )
+        except Exception as e:
+            print(f"Error creating subtask '{content}': {e}")
+
+    return created_subtasks
 
 
 def _update_task(task_dict: dict, processing_notes: dict) -> dict:
@@ -199,6 +221,58 @@ def update_task(task_dict: dict, processing_notes: dict) -> dict:
         Dictionary with update results, including success status and any error messages
     """
     return _update_task(task_dict, processing_notes)
+
+
+@mcp.tool()
+def get_todoist_metadata() -> dict:
+    """
+    Get projects, sections, and labels from Todoist for reference.
+
+    Returns:
+        Dictionary containing projects, sections, and labels
+    """
+    try:
+        # Get all projects with full metadata
+        projects = todoist_client.get_projects()
+        project_data = [
+            {
+                "id": project.id,
+                "name": project.name,
+                "parent_id": project.parent_id,
+                "is_shared": project.is_shared,
+            }
+            for project in projects
+        ]
+
+        # Get all sections with full metadata
+        sections = todoist_client.get_sections()
+        section_data = [
+            {
+                "id": section.id,
+                "name": section.name,
+                "project_id": section.project_id,
+            }
+            for section in sections
+        ]
+
+        # Get all labels with full metadata
+        labels = todoist_client.get_labels()
+        label_data = [
+            {
+                "id": label.id,
+                "name": label.name,
+            }
+            for label in labels
+        ]
+
+        return {
+            "projects": project_data,
+            "sections": section_data,
+            "labels": label_data,
+        }
+    except Exception as error:
+        print(f"Error fetching metadata: {error}")
+        return {"error": str(error)}
 
 
 # if __name__ == "__main__":

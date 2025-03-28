@@ -42,23 +42,49 @@ class TodoistClient:
             print(f"Error checking project: {error}")
             return False
 
+    def get_sections(self):
+        """Get all sections from Todoist."""
+        try:
+            return self.api.get_sections()
+        except Exception as error:
+            print(f"Error fetching sections: {error}")
+            return []
+
+    def get_labels(self):
+        """Get all labels from Todoist."""
+        try:
+            return self.api.get_labels()
+        except Exception as error:
+            print(f"Error fetching labels: {error}")
+            return []
+
     def update_task(self, task_id, **kwargs):
         """Update a task in Todoist."""
         try:
-            return self.api.update_task(task_id, **kwargs)
-        except Exception as error:
-            print(f"Error updating task: {error}")
-            return None
+            # Filter out parameters that aren't valid for the API
+            valid_params = [
+                "content",
+                "description",
+                "labels",
+                "priority",
+                "due_string",
+                "due_date",
+                "due_datetime",
+                "due_lang",
+                "project_id",  # Not listed in Docs
+                "section_id",  # Not listed in Docs
+                "order",  # Not listed in Docs
+                "assignee_id",
+                # "duration",
+                # "duration_unit",
+                # "deadline_date",
+                # "deadline_lang",
+            ]
+            api_kwargs = {k: v for k, v in kwargs.items() if k in valid_params}
 
-    def create_subtask(self, parent_id, content, **kwargs):
-        """Create a subtask for a task in Todoist."""
-        try:
-            kwargs["parent_id"] = parent_id
-            kwargs["content"] = content
-
-            return self.api.add_task(**kwargs)
+            return self.api.update_task(task_id=task_id, **api_kwargs)
         except Exception as error:
-            print(f"Error creating subtask for {parent_id}: {error}")
+            print(f"Error updating task {task_id}: {error}")
             return None
 
     # Add more methods here as needed
