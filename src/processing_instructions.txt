@@ -1,0 +1,109 @@
+# Todoist Alchemy: AI-Powered Task Organization System
+
+## Core Functionality
+
+The system processes task entries and transforms them by:
+1. Reading unorganized tasks that don't already have the "[TA]" or "!" marker
+2. Cleaning up task names for clarity and consistency (required)
+3. Adding short, informative descriptions that explain the purpose and scope (required)
+4. Estimating required work hours using consistent format [1h], [20m], [1.5h], etc. (required)
+5. Adding due dates only for genuinely urgent tasks (rarely needed)
+6. Assigning priority levels from P1 (highest) to P4 (lowest) (required)
+7. Adding relevant labels for categorization based on my time-block system (required)
+8. Associating with appropriate projects and sections (required when applicable)
+9. Breaking down into subtasks only when truly necessary (include description and time estimates for each)
+10. Identifying and merging or grouping similar tasks when appropriate
+
+## Task Processing Rules
+
+The system follows these guidelines when processing tasks:
+- Preserve tasks marked with "!" at description
+- Skip tasks already marked with "[TA]" at the end of the description
+- Skip tasks that are in a shared project
+- Create clear, action-oriented task names that start with verbs
+- Generate concise descriptions (1-3 sentences) that provide context
+- Estimate work hours based on task complexity and scope and add it to description
+- Only add due dates for time-sensitive items with clear deadlines
+- Assign priority based on:
+  * P1: Urgent and important (must be done today/soon)
+  * P2: Important but not urgent (should be done soon)
+  * P3: Normal priority tasks
+  * P4: Low priority, nice-to-have tasks
+- Apply time-block labels appropriately:
+  * Deep Work (10:00 AM - 1:15 PM): Complex, high-focus tasks
+  * Learning Block (2:00 PM - 2:30 PM): Reading, learning activities
+  * Quick Wins (2:30 PM - 4:00 PM): Simple, fast-completion tasks
+  * Day Close (4:00 PM - 5:00 PM): End-of-day tasks, planning
+  * Evening Time (7:00 PM - 10:00 PM): Personal activities
+  * Weekend (12:00 PM - 7:00 PM): Weekend-specific tasks
+- Only create subtasks for complex items that truly benefit from breakdown
+- Always mark processed tasks with "[TA]" at the end of the description
+- If unsure about project, label assignment, or description, ask for clarification instead of guessing
+- Balance thoroughness with practical utility - avoid creating excessive structure
+
+
+## Desired Output Format
+
+The ideal output format for processed tasks would look like:
+
+Input: "Read chapter 3 of programming book"
+Output:
+    Task: "Read Chapter 3 of Programming Book"
+    Description: "Complete Chapter 3 on data structures to continue progress in learning course. [1h] [TA]"
+    Priority: P3
+    Project: Personal / Self-Development
+    Label: Learning
+
+Input: "using AI organize and update email filtering"
+Output:
+    Task: "Organize and update email filtering, using AI"
+    Description: "Review current filters and update email filtering rules using AI. [4.25h] [TA]"
+    Priority: P2
+    Project: Personal / Projects
+    Label: Quick Wins
+    Subtasks:
+		- Review current filters [30m]
+		- Prep work and learn [30m]
+		- Update Proton email filtering rules [2h]
+		- Test new filters [15m]
+
+Input: "Update resume"
+Output:
+    Task: "Update Resume"
+    Description: "Review and update resume for job application. [1h] [TA]"
+    Priority: P3
+    Project: Professional / Career Development
+    Label: Quick Wins
+
+Input: "Message my doctor today"
+Output:
+    Task: "Message my doctor today"
+    Description: "Message my doctor today [15m] [TA]"
+    Priority: P1
+    Project: Personal /
+    Label: Day
+    Due: [TODAY]
+
+Input: "Call mom"
+Output:
+    Task: "Call mom"
+    Description: "Call mom [15m] [TA]"
+    Priority: P3
+    Project: Personal /
+    Label: Quick Wins
+
+Input: "Check emails"
+Output:
+    Task: "Check emails"
+    Description: "Check emails [15m] [TA]"
+    Priority: P3
+    Project: Personal / Routines
+    Label: Quick Wins
+
+Input: "Make a dr appointment"
+Output:
+    Task: "Make a dr appointment"
+    Description: "Make a dr appointment [30m] [TA]"
+    Priority: P3
+    Project: Personal / Routines
+    Label: Quick Wins

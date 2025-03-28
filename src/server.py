@@ -7,6 +7,7 @@
 # Import necessary libraries
 from typing import List, Dict
 from mcp.server.fastmcp import FastMCP
+import os
 
 # Import Todoist client from todoist_client.py
 from todoist_client import TodoistClient
@@ -197,6 +198,28 @@ def _update_task(task_dict: dict, processing_notes: dict) -> dict:
         return {"success": False, "error": str(e)}
 
 
+def _read_processing_instructions() -> str:
+    """
+    Read the contents of the processing_instructions.txt file from the src directory.
+
+    Returns:
+        str: The contents of the processing_instructions.txt file
+    """
+    try:
+        file_path = os.path.join(
+            os.path.dirname(__file__), "processing_instructions.txt"
+        )
+        with open(file_path, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return (
+            "Error: processing_instructions.txt file not found in src directory. "
+            "Please create this file with your Todoist Alchemy instructions."
+        )
+    except Exception as e:
+        return f"Error reading processing instructions: {str(e)}"
+
+
 ### Todoist Integration Functions (Tools) ###
 
 
@@ -292,6 +315,19 @@ def get_todoist_metadata() -> dict:
     except Exception as error:
         print(f"Error fetching metadata: {error}")
         return {"error": str(error)}
+
+
+@mcp.tool()
+def get_processing_instructions() -> str:
+    """
+    Get detailed instructions for how to process Todoist tasks.
+
+    Returns:
+        str: Complete instructions from the processing_instructions.txt file for the
+        Todoist Alchemy system, including processing rules, task formatting
+        guidelines, and output formats.
+    """
+    return _read_processing_instructions()
 
 
 if __name__ == "__main__":

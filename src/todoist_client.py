@@ -30,7 +30,9 @@ class TodoistClient:
             raise ValueError(
                 "Todoist API token not found."
                 "Please set TODOIST_API_TOKEN in environment variables."
-                "or in your claude_desktop_config.json file."
+                "Or in your claude_desktop_config.json file."
+                "You can get your API token from: "
+                "https://app.todoist.com/app/settings/integrations/developer"
             )
 
         self.api = TodoistAPI(self.api_token)
