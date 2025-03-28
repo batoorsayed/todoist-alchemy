@@ -13,7 +13,11 @@ class TodoistClient:
         """Initialize with API token from environment variables."""
         self.api_token = os.getenv("TODOIST_API_TOKEN")
         if not self.api_token:
-            raise ValueError("Todoist API token not found in environment variables")
+            raise ValueError(
+                "Todoist API token not found."
+                "Please set TODOIST_API_TOKEN in environment variables."
+                "or in your claude_desktop_config.json file."
+            )
 
         self.api = TodoistAPI(self.api_token)
 
