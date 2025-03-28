@@ -107,3 +107,16 @@ Output:
     Priority: P3
     Project: Personal / Routines
     Label: Quick Wins
+
+
+Tasks should be returned with EXACTLY these field names:
+- content: The task title 
+- description: The complete task description (time estimate included)
+- priority: Priority level (P1-P4)
+- labels: List of label names
+- due_string: Optional due date (only for urgent tasks)
+- project_id: Optional project ID
+- section_id: Optional section ID
+- subtasks: Optional list of subtask dictionaries
+
+Do not use variations like "new_description" or "updated_content".
