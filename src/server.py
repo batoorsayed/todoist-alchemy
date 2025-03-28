@@ -206,20 +206,20 @@ def _update_task(task_dict: dict, processing_notes: dict) -> dict:
 
 def _read_processing_instructions() -> str:
     """
-    Read the contents of the processing_instructions.txt file from the src directory.
+    Read the contents of the processing_instructions.txt file from the config directory.
 
     Returns:
         str: The contents of the processing_instructions.txt file
     """
     try:
         file_path = os.path.join(
-            os.path.dirname(__file__), "processing_instructions.txt"
+            os.path.dirname(__file__), "..", "config", "processing_instructions.txt"
         )
         with open(file_path, "r") as f:
             return f.read()
     except FileNotFoundError:
         return (
-            "Error: processing_instructions.txt file not found in src directory. "
+            "Error: processing_instructions.txt file not found in config directory. "
             "Please create this file with your Todoist Alchemy instructions."
         )
     except Exception as e:

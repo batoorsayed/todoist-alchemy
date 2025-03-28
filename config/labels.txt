@@ -1,0 +1,18 @@
+## Labels
+
+### Primary Focus Blocks
+- Deep Work (10:00 AM - 1:15 PM): High-priority tasks requiring concentration, critical thinking, and focused attention. Core productive period with a 15-minute break at 11:30 AM. Primary time for studying or important professional projects.
+- Quick Wins (2:30 PM - 4:00 PM): Medium to low-effort tasks that can be completed efficiently. Ideal for administrative work, follow-ups, or tasks requiring less mental bandwidth after lunch.
+- End of Day (4:00 PM - 5:00 PM): End-of-day review, planning for tomorrow, and lightweight tasks. Preparation for transition to personal time and dinner.
+
+### Learning & Development
+- Learning (2:00 PM - 2:30 PM): Dedicated time for professional development, reading current book, or skill-building activities.
+
+### Personal Time
+- Off Hour (7:00 PM - 10:00 PM): Personal activities after dinner. Reserved for relaxation, hobbies, family time, or light personal tasks.
+- Weekend (12:00 PM - 7:00 PM): Weekend-specific activities and tasks. Used selectively for items that require weekend attention.
+
+### Supplementary (Low Usage)
+
+- Morning (10:00 AM - 11:30 AM): First part of deep work, when needed to specifically schedule morning-only tasks.
+- Full Day (11:45 AM - 5:00 PM): For tasks spanning multiple time blocks or requiring day-long attention.
