@@ -12,6 +12,12 @@ import os
 # Import Todoist client from todoist_client.py
 from todoist_client import TodoistClient
 
+# TODO: Improve dependency management for easier user installation
+#   Options to consider:
+#   1. Create an npm package wrapper (like official MCP servers)
+#   2. Add auto-dependency installation in this script
+#   3. Create an installer shell script that users run first
+#   See README.md for current installation requirements
 
 # TODO: Ensure consistent type annotations throughout the codebase
 # Consider using more specific types (e.g., TypedDict) for task data structures

@@ -1,5 +1,16 @@
-# todoist-alchemy
-AI-powered task transformation system: turns messy Todoist entries into structured, actionable items with smart organization and time estimates.
+# Todoist Alchemy MCP
+
+Todoist Alchemy is an AI-powered task organization system that leverages Claude and the Model Context Protocol (MCP) to transform unstructured Todoist tasks into well-organized, actionable items.
+
+## Features
+
+- Cleans up task names for clarity and consistency
+- Adds short, informative descriptions
+- Estimates required work hours
+- Assigns appropriate priority levels
+- Adds relevant labels for time-block categorization
+- Associates tasks with appropriate projects and sections
+- Breaks down complex tasks into subtasks when necessary
 
 ## Setup
 
@@ -19,7 +30,7 @@ cd todoist-alchemy-mcp
 
 2. Install dependencies:
 ```
-pip install -r requirements.txt
+pip install mcp todoist-api-python python-dotenv
 ```
 3. Set up environment variables:
 ```

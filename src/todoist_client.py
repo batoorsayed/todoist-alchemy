@@ -18,13 +18,16 @@ load_dotenv()
 # def retry_on_error(max_retries=3, delay=1):
 #     """Decorator to retry API operations on failure."""
 #     def decorator(func):...
+
+# TODO: Add API rate limit handling
+# Consider implementing a rate limiter to avoid hitting Todoist API limits
+
+
 class TodoistClient:
     """Client for interacting with Todoist API."""
 
     def __init__(self):
         """Initialize with API token from environment variables."""
-        # TODO: Add API rate limit handling
-        # Consider implementing a rate limiter to avoid hitting Todoist API limits
         self.api_token = os.getenv("TODOIST_API_TOKEN")
         if not self.api_token:
             raise ValueError(
