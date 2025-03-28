@@ -275,20 +275,20 @@ def get_todoist_metadata() -> dict:
         return {"error": str(error)}
 
 
-# if __name__ == "__main__":
-#    print("Starting Todoist Alchemy MCP Server...")
-#    print("This server helps Claude organize your Todoist tasks.")
-#    print("Connect to this server in Claude Desktop to begin processing tasks.")
-
-#    # Run the server with stdio transport for Claude Desktop
-#    mcp.run(transport="stdio")
-
-# Temp for testing
 if __name__ == "__main__":
-    # Test fetching unprocessed tasks
-    unprocessed = _fetch_unprocessed_tasks()
-    print(f"Found {len(unprocessed)} unprocessed tasks")
-
-    # Then run the server normally
     print("Starting Todoist Alchemy MCP Server...")
+    print("This server helps Claude organize your Todoist tasks.")
+    print("Connect to this server in Claude Desktop to begin processing tasks.")
+
+    # Run the server with stdio transport for Claude Desktop
     mcp.run(transport="stdio")
+
+# Testing
+# if __name__ == "__main__":
+# Test fetching unprocessed tasks
+# unprocessed = _fetch_unprocessed_tasks()
+# print(f"Found {len(unprocessed)} unprocessed tasks")
+
+# Then run the server normally
+# print("Starting Todoist Alchemy MCP Server...")
+# mcp.run(transport="stdio")
