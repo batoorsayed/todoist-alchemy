@@ -1,9 +1,19 @@
+# TODO: Replace print statements with proper logging
+# import logging
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+
+
 # Import necessary libraries
 from typing import List, Dict
 from mcp.server.fastmcp import FastMCP
 
 # Import Todoist client from todoist_client.py
 from todoist_client import TodoistClient
+
+
+# TODO: Ensure consistent type annotations throughout the codebase
+# Consider using more specific types (e.g., TypedDict) for task data structures
 
 # Create a FastMCP server instance
 mcp = FastMCP("Todoist Alchemy")
@@ -301,3 +311,7 @@ if __name__ == "__main__":
 # Then run the server normally
 # print("Starting Todoist Alchemy MCP Server...")
 # mcp.run(transport="stdio")
+
+
+# TODO: Improve error reporting and propagation
+# Consider returning structured error objects instead of just printing

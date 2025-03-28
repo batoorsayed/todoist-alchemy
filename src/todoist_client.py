@@ -1,3 +1,9 @@
+# TODO: Replace print statements with proper logging
+# import logging
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+
+
 import os
 from dotenv import load_dotenv
 from todoist_api_python.api import TodoistAPI
@@ -6,11 +12,19 @@ from todoist_api_python.api import TodoistAPI
 load_dotenv()
 
 
+# TODO: Implement retry logic for API operations
+# Consider using a decorator to retry failed API calls
+# Example:
+# def retry_on_error(max_retries=3, delay=1):
+#     """Decorator to retry API operations on failure."""
+#     def decorator(func):...
 class TodoistClient:
     """Client for interacting with Todoist API."""
 
     def __init__(self):
         """Initialize with API token from environment variables."""
+        # TODO: Add API rate limit handling
+        # Consider implementing a rate limiter to avoid hitting Todoist API limits
         self.api_token = os.getenv("TODOIST_API_TOKEN")
         if not self.api_token:
             raise ValueError(
@@ -103,3 +117,7 @@ if __name__ == "__main__":
     # Print the first task as an example
     if tasks:
         print(f"Example task: {tasks[0].content}")
+
+
+# TODO: Improve error reporting and propagation
+# Consider returning structured error objects instead of just printing
