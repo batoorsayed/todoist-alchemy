@@ -57,15 +57,6 @@ class TodoistClient:
             logger.error(f"Error fetching projects: {error}", exc_info=True)
             return []
 
-    def is_shared_project(self, project_id):
-        """Check if a project is shared."""
-        try:
-            project = self.api.get_project(project_id)
-            return project.is_shared
-        except Exception as error:
-            logger.error(f"Error checking project: {error}", exc_info=True)
-            return False
-
     def get_sections(self):
         """Get all sections from Todoist."""
         try:
