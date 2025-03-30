@@ -179,7 +179,3 @@ if __name__ == "__main__":
     # Print the first task as an example
     if tasks:
         print(f"Example task: {tasks[0].content}")
-
-
-# TODO: Improve error reporting and propagation
-# Consider returning structured error objects instead of just printing
