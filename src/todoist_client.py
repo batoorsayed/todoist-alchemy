@@ -104,6 +104,37 @@ class TodoistClient:
             logger.error(f"Error updating task {task_id}: {error}", exc_info=True)
             return None
 
+    def add_task(self, **kwargs):
+        """Add a new task to Todoist."""
+        try:
+            # Filter out invalid parameters
+            valid_params = [
+                "content",
+                "description",
+                "project_id",
+                "section_id",
+                "parent_id",
+                "order",
+                "labels",
+                "priority",
+                "due_string",
+                "due_date",
+                "due_datetime",
+                "due_lang",
+                "assignee_id",
+                "duration",
+                "duration_unit",
+                "deadline_date",
+                "deadline_lang",
+            ]
+            api_kwargs = {k: v for k, v in kwargs.items() if k in valid_params}
+
+            logger.info(f"Creating new task with fields: {list(api_kwargs.keys())}")
+            return self.api.add_task(**api_kwargs)
+        except Exception as error:
+            logger.error(f"Error creating task: {error}", exc_info=True)
+            return None
+
     def get_subtasks(self, parent_id):
         """Get all subtasks for a given parent task."""
         try:
