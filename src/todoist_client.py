@@ -1,12 +1,11 @@
-# TODO: Replace print statements with proper logging
-# import logging
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.INFO)
-
-
+# Import necessary libraries
 import os
 from dotenv import load_dotenv
 from todoist_api_python.api import TodoistAPI
+import logging
+
+# Logger
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -42,10 +41,12 @@ class TodoistClient:
 
     def get_active_tasks(self):
         """Get all active tasks from Todoist."""
+
         try:
-            return self.api.get_tasks()
+            tasks = self.api.get_tasks()
+            return tasks
         except Exception as error:
-            print(f"Error fetching tasks: {error}")
+            logger.error(f"Error fetching tasks: {error}", exc_info=True)
             return []
 
     def get_projects(self):
@@ -53,24 +54,15 @@ class TodoistClient:
         try:
             return self.api.get_projects()
         except Exception as error:
-            print(f"Error fetching projects: {error}")
+            logger.error(f"Error fetching projects: {error}", exc_info=True)
             return []
-
-    def is_shared_project(self, project_id):
-        """Check if a project is shared."""
-        try:
-            project = self.api.get_project(project_id)
-            return project.is_shared
-        except Exception as error:
-            print(f"Error checking project: {error}")
-            return False
 
     def get_sections(self):
         """Get all sections from Todoist."""
         try:
             return self.api.get_sections()
         except Exception as error:
-            print(f"Error fetching sections: {error}")
+            logger.error(f"Error fetching sections: {error}", exc_info=True)
             return []
 
     def get_labels(self):
@@ -78,11 +70,12 @@ class TodoistClient:
         try:
             return self.api.get_labels()
         except Exception as error:
-            print(f"Error fetching labels: {error}")
+            logger.error(f"Error fetching labels: {error}", exc_info=True)
             return []
 
     def update_task(self, task_id, **kwargs):
         """Update a task in Todoist."""
+
         try:
             # Filter out parameters that aren't valid for the API
             valid_params = [
@@ -98,16 +91,48 @@ class TodoistClient:
                 "section_id",
                 "order",
                 "assignee_id",
-                # "duration",
-                # "duration_unit",
-                # "deadline_date",
-                # "deadline_lang",
+                "duration",
+                "duration_unit",
+                "deadline_date",
+                "deadline_lang",
             ]
             api_kwargs = {k: v for k, v in kwargs.items() if k in valid_params}
 
+            logger.info(f"Updating task {task_id} with {list(api_kwargs.keys())}")
             return self.api.update_task(task_id=task_id, **api_kwargs)
         except Exception as error:
-            print(f"Error updating task {task_id}: {error}")
+            logger.error(f"Error updating task {task_id}: {error}", exc_info=True)
+            return None
+
+    def add_task(self, **kwargs):
+        """Add a new task to Todoist."""
+        try:
+            # Filter out invalid parameters
+            valid_params = [
+                "content",
+                "description",
+                "project_id",
+                "section_id",
+                "parent_id",
+                "order",
+                "labels",
+                "priority",
+                "due_string",
+                "due_date",
+                "due_datetime",
+                "due_lang",
+                "assignee_id",
+                "duration",
+                "duration_unit",
+                "deadline_date",
+                "deadline_lang",
+            ]
+            api_kwargs = {k: v for k, v in kwargs.items() if k in valid_params}
+
+            logger.info(f"Creating new task with fields: {list(api_kwargs.keys())}")
+            return self.api.add_task(**api_kwargs)
+        except Exception as error:
+            logger.error(f"Error creating task: {error}", exc_info=True)
             return None
 
     def get_subtasks(self, parent_id):
@@ -115,22 +140,31 @@ class TodoistClient:
         try:
             return self.api.get_tasks(parent_id=parent_id)
         except Exception as error:
-            print(f"Error fetching subtasks for parent {parent_id}: {error}")
+            logger.error(
+                f"Error fetching subtasks for parent {parent_id}: {error}",
+                exc_info=True,
+            )
             return []
 
     def delete_subtasks(self, parent_id):
         """Delete all subtasks for a given parent task."""
+
         try:
             # Get all subtasks
             subtasks = self.get_subtasks(parent_id)
 
             # Delete each subtask
+            logger.debug(f"Deleting {len(subtasks)} subtasks for parent {parent_id}")
             for subtask in subtasks:
                 self.api.delete_task(task_id=subtask.id)
+                logger.debug(f"Deleted subtask {subtask.id}")
 
             return True
         except Exception as error:
-            print(f"Error deleting subtasks for parent {parent_id}: {error}")
+            logger.error(
+                f"Error deleting subtasks for parent {parent_id}: {error}",
+                exc_info=True,
+            )
             return False
 
     # Add more methods here as needed
@@ -145,7 +179,3 @@ if __name__ == "__main__":
     # Print the first task as an example
     if tasks:
         print(f"Example task: {tasks[0].content}")
-
-
-# TODO: Improve error reporting and propagation
-# Consider returning structured error objects instead of just printing

@@ -178,6 +178,8 @@ cython_debug/
 
 # Documentation Files
 docs/
+mcp/
+todoist-api/
 
 # DotEnv configuration
 .env.local

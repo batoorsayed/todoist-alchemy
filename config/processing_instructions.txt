@@ -22,7 +22,8 @@ The system follows these guidelines when processing tasks:
 - Skip tasks that are in a shared project
 - Create clear, action-oriented task names that start with verbs
 - Generate concise descriptions (1-3 sentences) that provide context
-- Estimate work hours based on task complexity and scope and add it to description
+- Estimate work hours based on task complexity and scope and add it to description. 
+    - It is better to overestimate than underestimate.
 - Only add due dates for time-sensitive items with clear deadlines
 - Assign priority based on:
   * P1: Urgent and important (must be done today/soon)
@@ -120,3 +121,33 @@ Tasks should be returned with EXACTLY these field names:
 - subtasks: Optional list of subtask dictionaries
 
 Do not use variations like "new_description" or "updated_content".
+
+
+## Batch Processing Instructions
+
+When processing multiple tasks at once:
+
+1. Consider relationships between tasks - identify tasks that could be:
+   - Combined (if they're duplicates or very similar)
+   - Split into subtasks (if they're too complex)
+   - Grouped by project or theme
+
+2. Apply consistent formatting across all tasks:
+   - Use similar description styles for related tasks
+   - Apply consistent time estimates for similar activities
+   - Use the same labels for tasks in the same category
+
+3. Return a structured response with ALL tasks that were submitted for processing:
+   - Include both modified tasks and unmodified tasks in your response
+   - For each task, return a complete set of fields as specified below
+   - Clearly indicate any tasks that were combined, split, or substantially modified
+
+Your response should be a list of task objects, each containing these fields:
+- content: The task title 
+- description: The complete task description (time estimate included)
+- priority: Priority level (P1-P4)
+- labels: List of label names
+- due_string: Optional due date (only for urgent tasks)
+- project_id: Optional project ID
+- section_id: Optional section ID
+- subtasks: Optional list of subtask dictionaries
