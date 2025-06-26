@@ -45,7 +45,7 @@ sse-starlette==2.2.1
 stack-data==0.6.3
 starlette==0.46.1
 todoist_api_python==2.1.7
-tornado==6.4.2
+tornado==6.5
 traitlets==5.14.3
 typing-inspection==0.4.0
 typing_extensions==4.13.0
